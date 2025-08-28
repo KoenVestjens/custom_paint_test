@@ -1,9 +1,11 @@
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
 void main() => runApp(const MaterialApp(home: Demo()));
 
+// Screen width: 402px
 // Screen height: 874px
 // Red container left height: 706
 // Red container right height: 734px
@@ -20,8 +22,32 @@ class Demo extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
         padding: EdgeInsets.all(10),
-        child: Stack(children: [_buildRedSquareContainer(context)]),
+        child: Stack(
+          children: [
+            _buildRedSquareContainer(context),
+            // Positioned(
+            //   bottom: 0,
+            //   right: 0,
+            //   child: Container(
+            //     width: MediaQuery.of(context).size.width * 0.3010471204,
+            //     height: MediaQuery.of(context).size.height * 0.1381733021,
+            //     color: Colors.blue,
+            //   ),
+            // ),
+            // Positioned(
+            //   left: 0,
+            //   bottom: 0,
+            //   child: Container(
+            //     width: MediaQuery.of(context).size.width * 0.6727748691,
+            //     height: MediaQuery.of(context).size.height * 0.1615925059,
+            //     color: Colors.yellow,
+            //   ),
+            // ),
+          ],
+        ),
       ),
     );
   }
@@ -29,7 +55,7 @@ class Demo extends StatelessWidget {
   Widget _buildRedSquareContainer(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.86,
+      height: MediaQuery.of(context).size.height * 0.8594847775,
       child: SlantedSmoothCard(
         topLeft: 60,
         topRight: 60,
@@ -102,7 +128,7 @@ class _SlantedSmoothPainter extends CustomPainter {
     // Clamp radii so they don't exceed edge lengths
     final tl = topLeft.clamp(0, w / 2).toDouble();
     final tr = topRight.clamp(0, w / 2).toDouble();
-    final bl = bottomLeft.clamp(0, w / 2).toDouble();
+    final bl = bottomLeft.clamp(0, w / 3).toDouble();
     final br = bottomRight.clamp(0, w / 2).toDouble();
 
     final path = Path();
@@ -116,11 +142,21 @@ class _SlantedSmoothPainter extends CustomPainter {
     // Smooth top-right corner (quadratic)
     path.quadraticBezierTo(w, 0, w, tr);
 
-    // Right edge down to bottom-right corner (sharp corner)
-    path.lineTo(w, h);
+    // Right edge down to before bottom-right corner
+    path.lineTo(w, h - br);
 
-    // Bottom edge (slanted) directly to bottom-left corner (sharp corner)
+    // Simple smooth bottom-right corner using quadratic bezier
     final bottomLeftY = h - bottomLift;
+    path.quadraticBezierTo(w, h, w - br, h);
+
+    // Bottom edge (slanted) - straight line to before bottom-left corner
+    final bottomEdgeLen = (Offset(w - br, h) - Offset(0, bottomLeftY)).distance;
+    final t = bl / bottomEdgeLen;
+    final bx = lerpDouble(w - br, 0, t)!;
+    final by = lerpDouble(h, bottomLeftY, t)!;
+    path.lineTo(bx, by);
+
+    // Bottom-left corner with proper quadratic bezier
     path.lineTo(0, bottomLeftY);
 
     // Left edge up to before top-left corner
