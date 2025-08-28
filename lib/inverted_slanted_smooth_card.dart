@@ -15,6 +15,8 @@ class InvertedSlantedSmoothCard extends StatelessWidget {
 
   final Color color;
   final double topLeft, topRight, bottomLeft, bottomRight;
+
+  // Lifts the top left corner
   final double topLift;
 
   @override
@@ -26,7 +28,7 @@ class InvertedSlantedSmoothCard extends StatelessWidget {
         topRight: topRight,
         bottomLeft: bottomLeft,
         bottomRight: bottomRight,
-        topLift: topLift,
+        topDrop: topLift,
       ),
       child: const SizedBox.expand(), // size from parent
     );
@@ -40,12 +42,12 @@ class _InvertedSlantedSmoothPainter extends CustomPainter {
     required this.topRight,
     required this.bottomLeft,
     required this.bottomRight,
-    required this.topLift,
+    required this.topDrop,
   });
 
   final Color color;
   final double topLeft, topRight, bottomLeft, bottomRight;
-  final double topLift;
+  final double topDrop;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -62,7 +64,7 @@ class _InvertedSlantedSmoothPainter extends CustomPainter {
     final path = Path();
 
     // Start on left edge, after the special top-left lifted corner
-    final topLeftY = topLift;
+    final topLeftY = -topDrop;
     path.moveTo(0, topLeftY + tl);
 
     // Left edge down to before bottom-left corner
@@ -84,14 +86,14 @@ class _InvertedSlantedSmoothPainter extends CustomPainter {
     path.quadraticBezierTo(w, 0, w - tr, 0);
 
     // Top edge (slanted) - straight line to before top-left corner
-    final topEdgeLen = (Offset(w - tr, 0) - Offset(topLift, topLeftY)).distance;
+    final topEdgeLen = (Offset(w - tr, 0) - Offset(topDrop, topLeftY)).distance;
     final t = tl / topEdgeLen;
-    final tx = lerpDouble(w - tr, topLift, t)!;
+    final tx = lerpDouble(w - tr, topDrop, t)!;
     final ty = lerpDouble(0, topLeftY, t)!;
     path.lineTo(tx, ty);
 
     // Top-left corner with smooth quadratic bezier (lifted corner)
-    path.lineTo(topLift, topLeftY); // point A (lifted position)
+    path.lineTo(topDrop, topLeftY); // point A (lifted position)
 
     // Smooth curve from point A to point B using quadratic bezier
     path.quadraticBezierTo(0, topLeftY, 0, topLeftY + tl); // point B
@@ -107,5 +109,5 @@ class _InvertedSlantedSmoothPainter extends CustomPainter {
       old.topRight != topRight ||
       old.bottomLeft != bottomLeft ||
       old.bottomRight != bottomRight ||
-      old.topLift != topLift;
+      old.topDrop != topDrop;
 }

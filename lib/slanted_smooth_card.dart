@@ -15,6 +15,8 @@ class SlantedSmoothCard extends StatelessWidget {
 
   final Color color;
   final double topLeft, topRight, bottomLeft, bottomRight;
+
+  // Lifts the bottom right corner
   final double bottomLift;
 
   @override

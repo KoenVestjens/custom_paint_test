@@ -7,54 +7,78 @@ import 'package:flutter/material.dart';
 
 void main() => runApp(const MaterialApp(home: Demo()));
 
-// Screen width: 402px
-// Screen height: 874px
-// Red container left height: 706
-// Red container right height: 734px
+final bottomRightSquareTopLift = 8.0;
+final bottomLeftSquareTopLift = 16.0;
+
 class Demo extends StatelessWidget {
   const Demo({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Device height = 874px
-    // Padding = 10px
+    // Screen width: 402px
+    // Screen height: 874px
+    // Red container left height: 706
+    // Red container right height: 734px
 
-    // Red square height = 734 and 706
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    // Calculate the width and height of the right square
+    final bottomRightSquareWidth = 115.0;
+    final bottomRightSquareHeight = 115.0;
+
+    // Calculate the width and height of the bottom left square based
+    // on the space that is left over
+    // We need to take into account:
+    // - Screen width
+    // - 10px padding left, in between and right
+    // - The width of bottom right square
+    final bottomLeftSquareWidth = screenWidth - bottomRightSquareWidth - 3 * 10;
+    final bottomLeftSquareHeight =
+        bottomRightSquareHeight + bottomRightSquareTopLift + 2;
+
+    // Calculate the width and height of the top square
+    final topSquareWidth = screenWidth;
+    final topSquareHeight = screenHeight - bottomLeftSquareHeight - 24;
 
     return Scaffold(
       backgroundColor: Colors.white,
       body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
+        width: screenWidth,
+        height: screenHeight,
         padding: EdgeInsets.all(10),
         child: Stack(
           children: [
-            _buildRedSquareContainer(context),
+            _buildRedSquareContainer(context, topSquareWidth, topSquareHeight),
             Align(
               alignment: Alignment.bottomLeft,
-              child: _buildRedSquareContainer2(context),
+              child: _buildBottomLeftContainer(
+                context,
+                bottomLeftSquareWidth,
+                bottomLeftSquareHeight,
+              ),
             ),
-            // Positioned(
-            //   left: 0,
-            //   bottom: 0,
-            //   child: Container(
-            //     width: MediaQuery.of(context).size.width * 0.6727748691,
-            //     height: MediaQuery.of(context).size.height * 0.1615925059,
-            //     color: Colors.yellow,
-            //   ),
-            // ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: _buildBottomRightContainer(
+                context,
+                bottomRightSquareWidth,
+                bottomRightSquareHeight,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildRedSquareContainer(BuildContext context) {
-    final height = MediaQuery.of(context).size.height * 0.8594847775;
-
-    print(height); // Height: 732.28103043
+  Widget _buildRedSquareContainer(
+    BuildContext context,
+    double width,
+    double height,
+  ) {
     return SizedBox(
-      width: MediaQuery.of(context).size.width,
+      width: width,
       height: height,
       child: SlantedSmoothCard(
         topLeft: 60,
@@ -67,22 +91,52 @@ class Demo extends StatelessWidget {
     );
   }
 
-  Widget _buildRedSquareContainer2(BuildContext context) {
-    final height = MediaQuery.of(context).size.height * 0.2;
+  Widget _buildBottomLeftContainer(
+    BuildContext context,
+    double width,
+    double height,
+  ) {
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
+        // Container(width: width, height: height, color: Colors.purple),
+        SizedBox(
+          width: width,
+          height: height,
+          child: InvertedSlantedSmoothCard(
+            topLeft: 0,
+            topRight: 0,
+            bottomLeft: 60,
+            bottomRight: 0,
+            topLift: bottomLeftSquareTopLift,
+            color: Colors.red,
+          ),
+        ),
+      ],
+    );
+  }
 
-    print(height); // Height: 170.4
-
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.75,
-      height: height,
-      child: InvertedSlantedSmoothCard(
-        topLeft: 26,
-        topRight: 26,
-        bottomLeft: 30,
-        bottomRight: 30,
-        topLift: 28,
-        color: Colors.blue,
-      ),
+  Widget _buildBottomRightContainer(
+    BuildContext context,
+    double width,
+    double height,
+  ) {
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
+        SizedBox(
+          width: width,
+          height: height,
+          child: InvertedSlantedSmoothCard(
+            topLeft: 0,
+            topRight: 0,
+            bottomLeft: 0,
+            bottomRight: 60,
+            topLift: bottomRightSquareTopLift,
+            color: Colors.red,
+          ),
+        ),
+      ],
     );
   }
 }
