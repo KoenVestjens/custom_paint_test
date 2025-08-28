@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'dart:ui';
 
+import 'package:custom_paint_test/inverted_slanted_smooth_card.dart';
 import 'package:custom_paint_test/slanted_smooth_card.dart';
 import 'package:flutter/material.dart';
 
@@ -49,9 +50,12 @@ class Demo extends StatelessWidget {
   }
 
   Widget _buildRedSquareContainer(BuildContext context) {
+    final height = MediaQuery.of(context).size.height * 0.8594847775;
+
+    print(height); // Height: 732.28103043
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.8594847775,
+      height: height,
       child: SlantedSmoothCard(
         topLeft: 60,
         topRight: 60,
@@ -64,15 +68,19 @@ class Demo extends StatelessWidget {
   }
 
   Widget _buildRedSquareContainer2(BuildContext context) {
+    final height = MediaQuery.of(context).size.height * 0.2;
+
+    print(height); // Height: 170.4
+
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.75,
-      height: MediaQuery.of(context).size.height * 0.2,
-      child: SlantedSmoothCard(
-        topLeft: 60,
-        topRight: 60,
-        bottomLeft: 26,
-        bottomRight: 26,
-        bottomLift: 28,
+      height: height,
+      child: InvertedSlantedSmoothCard(
+        topLeft: 26,
+        topRight: 26,
+        bottomLeft: 30,
+        bottomRight: 30,
+        topLift: 28,
         color: Colors.blue,
       ),
     );
