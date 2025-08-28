@@ -1,3 +1,6 @@
+import 'dart:math' as math;
+import 'dart:ui';
+
 import 'package:custom_paint_test/slanted_smooth_card.dart';
 import 'package:flutter/material.dart';
 
@@ -26,15 +29,10 @@ class Demo extends StatelessWidget {
         child: Stack(
           children: [
             _buildRedSquareContainer(context),
-            // Positioned(
-            //   bottom: 0,
-            //   right: 0,
-            //   child: Container(
-            //     width: MediaQuery.of(context).size.width * 0.3010471204,
-            //     height: MediaQuery.of(context).size.height * 0.1381733021,
-            //     color: Colors.blue,
-            //   ),
-            // ),
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: _buildRedSquareContainer2(context),
+            ),
             // Positioned(
             //   left: 0,
             //   bottom: 0,
@@ -61,6 +59,21 @@ class Demo extends StatelessWidget {
         bottomRight: 26,
         bottomLift: 28,
         color: Color(0xFFE94E00),
+      ),
+    );
+  }
+
+  Widget _buildRedSquareContainer2(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.75,
+      height: MediaQuery.of(context).size.height * 0.2,
+      child: SlantedSmoothCard(
+        topLeft: 60,
+        topRight: 60,
+        bottomLeft: 26,
+        bottomRight: 26,
+        bottomLift: 28,
+        color: Colors.blue,
       ),
     );
   }
