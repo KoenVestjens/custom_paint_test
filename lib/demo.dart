@@ -1,6 +1,3 @@
-import 'dart:math' as math;
-import 'dart:ui';
-
 import 'package:custom_paint_test/inverted_slanted_smooth_card.dart';
 import 'package:custom_paint_test/slanted_smooth_card.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +5,7 @@ import 'package:flutter/material.dart';
 void main() => runApp(const MaterialApp(home: Demo()));
 
 final bottomRightSquareTopLift = 8.0;
-final bottomLeftSquareTopLift = 16.0;
+final bottomLeftSquareTopLift = 18.0;
 
 class Demo extends StatelessWidget {
   const Demo({super.key});
@@ -86,7 +83,10 @@ class Demo extends StatelessWidget {
         bottomLeft: 26,
         bottomRight: 26,
         bottomLift: 28,
-        color: Color(0xFFE94E00),
+        color: Color.fromRGBO(255, 96, 41, 1),
+        backgroundImageAsset: 'assets/red_background.png',
+        backgroundImageOpacity: 0.15,
+        // imageAsset: 'assets/red_pixel.png',
       ),
     );
   }
@@ -99,17 +99,19 @@ class Demo extends StatelessWidget {
     return Stack(
       alignment: Alignment.bottomCenter,
       children: [
-        // Container(width: width, height: height, color: Colors.purple),
         SizedBox(
           width: width,
           height: height,
           child: InvertedSlantedSmoothCard(
-            topLeft: 0,
-            topRight: 0,
+            topLeft: 20,
+            topRight: 18,
             bottomLeft: 60,
-            bottomRight: 0,
+            bottomRight: 18,
             topLift: bottomLeftSquareTopLift,
-            color: Colors.red,
+            color: Color.fromRGBO(255, 226, 0, 1),
+            backgroundImageAsset: 'assets/yellow_background.png',
+            backgroundImageOpacity: 0.2,
+            // imageAsset: 'assets/yellow_pixel.png',
           ),
         ),
       ],
@@ -128,12 +130,15 @@ class Demo extends StatelessWidget {
           width: width,
           height: height,
           child: InvertedSlantedSmoothCard(
-            topLeft: 0,
-            topRight: 0,
-            bottomLeft: 0,
+            topLeft: 12,
+            topRight: 20,
+            bottomLeft: 18,
             bottomRight: 60,
             topLift: bottomRightSquareTopLift,
-            color: Colors.red,
+            color: Color.fromRGBO(0, 194, 94, 1),
+            backgroundImageAsset: 'assets/green_background.png',
+            backgroundImageOpacity: 0.2,
+            // imageAsset: 'assets/green_pixel.png',
           ),
         ),
       ],
