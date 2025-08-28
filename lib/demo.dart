@@ -112,6 +112,16 @@ class Demo extends StatelessWidget {
             backgroundImageAsset: 'assets/yellow_background.png',
             backgroundImageOpacity: 0.2,
             // imageAsset: 'assets/yellow_pixel.png',
+            child: Text(
+              '+ Players',
+              style: TextStyle(
+                fontSize: 32,
+                fontFamily: 'BlamBot',
+                fontWeight: FontWeight.w700,
+                height: 1.2,
+                color: Colors.black,
+              ),
+            ),
           ),
         ),
       ],
@@ -139,6 +149,16 @@ class Demo extends StatelessWidget {
             backgroundImageAsset: 'assets/green_background.png',
             backgroundImageOpacity: 0.2,
             // imageAsset: 'assets/green_pixel.png',
+            child: Text(
+              'GO!',
+              style: TextStyle(
+                fontSize: 32,
+                fontFamily: 'BlamBot',
+                fontWeight: FontWeight.w700,
+                height: 1.2,
+                color: Colors.black,
+              ),
+            ),
           ),
         ),
       ],

@@ -87,3 +87,10 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+  
+  fonts:
+    - family: BlamBot
+      fonts:
+        - asset: assets/blambotcasual.ttf
+        - asset: assets/blambotcasualbold.ttf
+          weight: 700

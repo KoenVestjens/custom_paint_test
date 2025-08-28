@@ -3,7 +3,55 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+/// A custom widget that creates a card with smooth rounded corners and a slanted bottom edge.
+///
+/// The [SlantedSmoothCard] provides a visually appealing card design with customizable
+/// corner radii, colors, images, and border properties. The card features a unique
+/// slanted bottom edge created by lifting the bottom-left corner.
+///
+/// ## Features
+/// - Smooth rounded corners with individual radius control
+/// - Slanted bottom edge with customizable lift amount
+/// - Support for solid colors, background images, and overlay images
+/// - Customizable border with color and width options
+/// - Automatic image loading and error handling
+/// - Layered rendering system for optimal visual composition
+///
+/// ## Usage Example
+/// ```dart
+/// SlantedSmoothCard(
+///   color: Colors.blue,
+///   topLeft: 60,
+///   topRight: 60,
+///   bottomLeft: 26,
+///   bottomRight: 26,
+///   bottomLift: 28,
+///   backgroundImageAsset: 'assets/background.png',
+///   backgroundImageOpacity: 0.15,
+///   borderColor: Colors.black,
+///   borderWidth: 4.0,
+///   child: Center(child: Text('Content')),
+/// )
+/// ```
+///
+/// ## Shape Description
+/// The card shape is created using a custom path with the following structure:
+/// - Top edge: Straight line with rounded corners
+/// - Right edge: Straight line with rounded bottom corner
+/// - Bottom edge: Slanted line from bottom-right to lifted bottom-left
+/// - Left edge: Straight line with rounded top corner
+/// - Bottom-left corner: Lifted by [bottomLift] amount creating the slant
+///
+/// ## Rendering Layers
+/// The widget renders content in the following order (bottom to top):
+/// 1. Solid color background
+/// 2. Background image (if provided) with opacity
+/// 3. Main overlay image (if provided)
+/// 4. Border stroke (if borderWidth > 0)
+///
+/// All layers are clipped to the custom shape path.
 class SlantedSmoothCard extends StatefulWidget {
+  /// Creates a [SlantedSmoothCard] with customizable appearance and shape.
   const SlantedSmoothCard({
     super.key,
     this.color = const Color(0xFFE94E00),
@@ -14,17 +62,84 @@ class SlantedSmoothCard extends StatefulWidget {
     this.topRight = 72,
     this.bottomLeft = 24,
     this.bottomRight = 24,
-    this.bottomLift = 38, // how much higher the left bottom corner is
+    this.bottomLift = 38,
+    this.borderColor = Colors.black,
+    this.borderWidth = 8.0,
+    this.child = const SizedBox.expand(),
   });
 
+  /// The primary fill color of the card.
+  ///
+  /// This color serves as the base layer and will be visible when no images
+  /// are provided or when images have transparency.
   final Color color;
-  final String? imageAsset;
-  final String? backgroundImageAsset;
-  final double backgroundImageOpacity; // 0.0 to 1.0
-  final double topLeft, topRight, bottomLeft, bottomRight;
 
-  // Lifts the bottom right corner
+  /// Path to an image asset to be used as an overlay on top of all other layers.
+  ///
+  /// This image will be rendered on top of the background color and background image.
+  /// If the asset fails to load, the card will fall back to showing only the color
+  /// and background image layers.
+  final String? imageAsset;
+
+  /// Path to an image asset to be used as a background texture.
+  ///
+  /// This image is rendered between the solid color and the main image overlay.
+  /// The image is automatically scaled to fit the card dimensions.
+  final String? backgroundImageAsset;
+
+  /// The opacity level for the background image.
+  ///
+  /// Must be between 0.0 (completely transparent) and 1.0 (completely opaque).
+  /// This allows the background color to show through the background image.
+  final double backgroundImageOpacity;
+
+  /// The radius for the top-left corner in logical pixels.
+  ///
+  /// This value is automatically clamped to prevent the corner from exceeding
+  /// half the card width to maintain a valid shape.
+  final double topLeft;
+
+  /// The radius for the top-right corner in logical pixels.
+  ///
+  /// This value is automatically clamped to prevent the corner from exceeding
+  /// half the card width to maintain a valid shape.
+  final double topRight;
+
+  /// The radius for the bottom-left corner in logical pixels.
+  ///
+  /// This value is automatically clamped to prevent the corner from exceeding
+  /// one-third the card width due to the slanted bottom edge geometry.
+  final double bottomLeft;
+
+  /// The radius for the bottom-right corner in logical pixels.
+  ///
+  /// This value is automatically clamped to prevent the corner from exceeding
+  /// half the card width to maintain a valid shape.
+  final double bottomRight;
+
+  /// The amount to lift the bottom-left corner, creating the slanted bottom edge.
+  ///
+  /// This value determines how much higher the left side of the bottom edge
+  /// appears compared to the right side, creating the characteristic slant.
+  /// Higher values create a more pronounced slant effect.
   final double bottomLift;
+
+  /// The color of the border stroke.
+  ///
+  /// The border is drawn inside the card shape and follows all curves and edges.
+  final Color borderColor;
+
+  /// The width of the border stroke in logical pixels.
+  ///
+  /// Set to 0 to disable the border. The border is drawn inside the card shape,
+  /// so it will not extend beyond the card's boundaries.
+  final double borderWidth;
+
+  /// The child widget to be displayed inside the card.
+  ///
+  /// This widget will be centered within the card and clipped to the card's shape.
+  /// Defaults to [SizedBox.expand] which fills the available space.
+  final Widget child;
 
   @override
   State<SlantedSmoothCard> createState() => _SlantedSmoothCardState();
@@ -112,8 +227,10 @@ class _SlantedSmoothCardState extends State<SlantedSmoothCard> {
         bottomLeft: widget.bottomLeft,
         bottomRight: widget.bottomRight,
         bottomLift: widget.bottomLift,
+        borderColor: widget.borderColor,
+        borderWidth: widget.borderWidth,
       ),
-      child: const SizedBox.expand(), // size from parent
+      child: Center(child: widget.child),
     );
   }
 }
@@ -129,6 +246,8 @@ class _SlantedSmoothPainter extends CustomPainter {
     required this.bottomLeft,
     required this.bottomRight,
     required this.bottomLift,
+    required this.borderColor,
+    required this.borderWidth,
   });
 
   final Color color;
@@ -137,6 +256,8 @@ class _SlantedSmoothPainter extends CustomPainter {
   final double backgroundImageOpacity;
   final double topLeft, topRight, bottomLeft, bottomRight;
   final double bottomLift;
+  final Color borderColor;
+  final double borderWidth;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -221,8 +342,8 @@ class _SlantedSmoothPainter extends CustomPainter {
       backgroundPaint.shader = shader;
 
       // Apply opacity directly to the backgroundPaint
-      backgroundPaint.color = backgroundPaint.color.withOpacity(
-        backgroundImageOpacity,
+      backgroundPaint.color = backgroundPaint.color.withValues(
+        alpha: backgroundImageOpacity,
       );
 
       canvas.drawPath(path, backgroundPaint);
@@ -241,6 +362,15 @@ class _SlantedSmoothPainter extends CustomPainter {
       canvas.drawPath(path, imagePaint);
     }
 
+    // Layer 4: Draw border inside the shape (if border width > 0)
+    if (borderWidth > 0) {
+      final borderPaint = Paint()
+        ..color = borderColor
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = borderWidth;
+      canvas.drawPath(path, borderPaint);
+    }
+
     // Restore the canvas state
     canvas.restore();
   }
@@ -254,5 +384,7 @@ class _SlantedSmoothPainter extends CustomPainter {
       old.topLeft != topLeft ||
       old.topRight != topRight ||
       old.bottomLeft != bottomLeft ||
-      old.bottomLift != bottomLift;
+      old.bottomLift != bottomLift ||
+      old.borderColor != borderColor ||
+      old.borderWidth != borderWidth;
 }
