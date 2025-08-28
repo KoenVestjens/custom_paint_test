@@ -116,23 +116,12 @@ class _SlantedSmoothPainter extends CustomPainter {
     // Smooth top-right corner (quadratic)
     path.quadraticBezierTo(w, 0, w, tr);
 
-    // Right edge down to before bottom-right corner
-    path.lineTo(w, h - br);
+    // Right edge down to bottom-right corner (sharp corner)
+    path.lineTo(w, h);
 
-    // Smooth bottom-right corner
-    path.quadraticBezierTo(w, h, w - br, h);
-
-    // Bottom edge (slanted) to before bottom-left corner
+    // Bottom edge (slanted) directly to bottom-left corner (sharp corner)
     final bottomLeftY = h - bottomLift;
-    // move along slanted edge by bl amount
-    final bottomEdgeLen = (Offset(w, h) - Offset(0, bottomLeftY)).distance;
-    final t = bl / bottomEdgeLen; // param along edge
-    final bx = lerpDouble(w, 0, t)!;
-    final by = lerpDouble(h, bottomLeftY, t)!;
-    path.lineTo(bx, by);
-
-    // Smooth bottom-left corner (control at the corner)
-    path.quadraticBezierTo(0, bottomLeftY, 0, bottomLeftY - bl);
+    path.lineTo(0, bottomLeftY);
 
     // Left edge up to before top-left corner
     final leftEdgeLen = bottomLeftY; // from y=0 to y=bottomLeftY
